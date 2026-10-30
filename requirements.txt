@@ -1,0 +1,19 @@
+# Google Cloud - BigQuery
+google-cloud-bigquery
+google-cloud-bigquery-storage
+
+# Manipulação de dados e Parquet
+pandas
+pyarrow
+
+# Snowflake
+snowflake-connector-python
+
+# Variáveis de ambiente
+python-dotenv
+
+# Transformações com dbt
+dbt-core
+dbt-snowflake
+
+db-dtypes
