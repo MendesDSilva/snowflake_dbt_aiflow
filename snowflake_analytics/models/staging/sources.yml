@@ -1,0 +1,281 @@
+
+version: 2
+
+sources:
+  - name: raw
+    description: "Dados brutos de e-commerce carregados no Snowflake."
+
+    database: RETAIL_ANALYTICS
+    schema: RAW
+
+    tables: 
+
+      # ============================================================
+      # PAGAMENTOS
+      # ============================================================
+      
+      - name: PAGAMENTOS
+        description: "Tabela de pagamentos de pedidos do e-commerce"
+
+        columns:
+
+          - name: ID
+            description: "Identificador único do pagamento"
+            data_tests:
+              - not_null
+              - unique
+          
+          - name: PEDIDO_ID
+            description: "Identificador do pedidos associado ao pagamento"
+            data_tests:
+              - not null
+              - relationships:
+                  arguments:
+                    to: source('raw','PEDIDOS')
+                    field: ID
+          
+          - name: VALOR
+            description: "Valor do pagamento"
+            
+          - name: METODO
+            description: "Método de pagamento utilizado"
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values:
+                      - 'Pix'
+                      - 'Cartão de Crédito'
+                      - 'Boleto'
+
+          - name: DATA_PAGAMENTO
+            description: "Data em que o pagamento foi realizado"
+            data_tests:
+              - not_null
+
+      # ============================================================
+      # PEDIDOS
+      # ============================================================ 
+
+      - name: PEDIDOS
+        description: "Tabela de pedidos do e-commerce"
+
+        columns:
+
+          -name: ID
+          description: "Identificador único do pedido"
+          data_testes:
+            - not_nulll
+            - unique
+          
+          -name: CLIENTE_ID
+          description: "Identificador do cliente que realizou o pedido"
+          data_tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to: source('raw','CLIENTES')
+                  field: ID
+          
+          -name: ENDERECO_ID
+          description: "Identificador do endereço de entrega do pedido"
+          data_tests:
+            - not_null
+          
+          -name: DATA_PEDIDO
+          description: "Data em que o pedido foi realizado"
+         
+          -name: STATUS
+          description: "Status atual do pedido"
+          data_tests:
+            - not_null
+            - accepted_values:
+                arguments:
+                  values:
+                    - 'pendente'
+                    - 'concluído'
+                    - 'cancelado'
+
+      # ============================================================
+      # ITENS PEDIDOS
+      # ============================================================ 
+
+      - name: ITENS_PEDIDOS
+        description: "Tabela de itens de cada pedido do e-commerce"
+
+        columns:
+
+          -name: PEDIDO_ID
+          description: "Identificador único do item do pedido"
+          data_tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to: source('raw','PEDIDOS')
+                  field: ID
+          
+          -name: PRODUTO_ID
+          description: "Identificador do produto associado ao item do pedido"
+          data_tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to: source('raw','PRODUTOS')
+                  field: ID
+
+          -name: QUANTIDADE
+          description: "Quantidade do produto no item do pedido"
+
+          -name: PRECO_UNITARIO
+          description: "Preço unitário do produto no item do pedido"
+
+          -name: SUBTOTAL
+          description: "Subtotal do item do pedido (quantidade * preço unitário)"
+
+      # ============================================================
+      # PRODUTOS
+      # ============================================================ 
+
+      - name: PRODUTOS
+        description: "Tabela de produtos disponíveis no e-commerce"
+        
+        columns:
+
+          -name: ID
+          description: "Identificador único do produto"
+          data_tests:
+            - not_null
+            - unique
+          
+          -name: NOME
+          description: "Nome do produto"
+
+          -name: DESCRICAO
+          description: "Descrição detalhada do produto"
+
+          -name: CATEGORIA_ID
+          description: "Identificador da categoria do produto"
+
+          -name: PRECO
+          description: "Preço do produto"
+
+          -name: ESTOQUE
+          description: "Quantidade disponível em estoque do produto"
+
+          -name: DATA_CADASTRO
+          description: "Data em que o produto foi cadastrado no sistema"
+
+      # ============================================================
+      # CATEGORIAS
+      # ============================================================ 
+
+      - name: CATEGORIAS
+        description: "Tabela de categorias de produtos no e-commerce"
+
+        columns:
+          -name: ID
+          description: "Identificador único da categoria"
+          data_tests:
+            - not_null
+            - unique
+          
+          -name: NOME
+          description: "Nome da categoria"
+
+      # ============================================================
+      # CLIENTES
+      # ============================================================ 
+
+      - name: CLIENTES
+        description: "Tabela de clientes do e-commerce"
+
+        columns:
+          -name: ID
+          description: "Identificador único do cliente"
+          data_tests:
+            - not_null
+            - unique
+          
+          -name: NOME
+          description: "Nome completo do cliente"
+
+          -name: EMAIL
+          description: "Endereço de e-mail do cliente"
+          
+          -name: TELEFONE
+          description: "Número de telefone do cliente"
+
+          -name: DATA_CADASTRO
+          description: "Data em que o cliente foi cadastrado no sistema"
+         
+      # ============================================================
+      # AVALIACOES
+      # ============================================================ 
+
+      - name: AVALIACOES
+        description: "Tabela de avaliações de produtos feitas pelos clientes"
+
+        columns:
+          
+          -name: CLIENTE_ID
+          description: "Identificador do cliente que fez a avaliação"
+          data_tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to: source('raw','CLIENTES')
+
+          -name: PRODUTO_ID
+          description: "Identificador do produto avaliado"
+          data_tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to: source('raw','PRODUTOS')
+                  field: ID
+          
+          -name: NOTA
+          description: "Nota atribuída pelo cliente ao produto (1 a 5)"
+          data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: [1, 2, 3, 4, 5]
+                    quote: false
+        
+          -name: COMENTARIO
+          description: "Comentário opcional do cliente sobre o produto avaliado"
+
+          -name: DATA_AVALIACAO
+          description: "Data em que a avaliação foi feita pelo cliente"
+      
+      # ============================================================
+      # CARRINHO
+      # ============================================================ 
+
+      - name: CARRINHO
+        description: "Tabela de itens adicionados ao carrinho pelos clientes"
+
+        columns:
+          -name: CLIENTE_ID
+          description: "Identificador do cliente que adicionou o item ao carrinho"
+          data_tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to: source('raw','CLIENTES')
+                  field: ID
+          
+          -name: PRODUTO_ID
+          description: "Identificador do produto adicionado ao carrinho"
+          data_tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to: source('raw','PRODUTOS')
+                  field: ID
+          
+          -name: QUANTIDADE
+          description: "Quantidade do produto adicionada ao carrinho"
+
+          -name: DATA_ADICAO
+          description: "Data em que o item foi adicionado ao carrinho"

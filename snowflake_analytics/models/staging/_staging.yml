@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_clientes
+    description: "Validação de email da tabela de clientes"
+    columns:
+
+      - name: EMAIL
+        description: "Email normalizado"
+        data_tests:
+          - valid_email
+
+      - name: TELEFONE
+        description: "Telefone normalizado"
+        data_tests:
+          - valid_phone
