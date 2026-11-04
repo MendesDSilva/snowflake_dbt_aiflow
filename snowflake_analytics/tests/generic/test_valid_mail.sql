@@ -1,11 +1,11 @@
 {% test valid_email(model, column_name) %}
 
-    select *
-    from {{ model }}
-    where {{ column_name }} is not null
-      and not regexp_contains(
-          trim({{ column_name }}),
-          r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
-      )
+SELECT *
+FROM {{ model }}
+WHERE {{ column_name }} IS NOT NULL
+  AND NOT REGEXP_LIKE(
+      {{ column_name }},
+      '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+  )
 
 {% endtest %}

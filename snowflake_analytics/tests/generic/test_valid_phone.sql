@@ -1,11 +1,11 @@
 {% test valid_phone(model, column_name) %}
 
-    select *
-    from {{ model }}
-    where {{ column_name }} is not null
-      and not regexp_contains(
-          {{ column_name }},
-          r'^[0-9]+$'
-      )
+SELECT *
+FROM {{ model }}
+WHERE {{ column_name }} IS NOT NULL
+  AND NOT REGEXP_LIKE(
+      {{ column_name }},
+      '[0-9]+'
+  )
 
 {% endtest %}
