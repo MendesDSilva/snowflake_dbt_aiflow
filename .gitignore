@@ -1,0 +1,25 @@
+# Ambiente virtual
+.venv/
+
+# Credenciais e configurações locais
+.env
+.env.*
+!.env.example
+profiles.yml
+*.p8
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+
+# Arquivos de dados locais
+data/raw/
+
+# Arquivos gerados pelo dbt
+**/target/
+**/dbt_packages/
+**/logs/
+
+# VS Code
+.vscode/
